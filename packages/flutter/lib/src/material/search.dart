@@ -143,6 +143,7 @@ abstract class SearchDelegate<T> {
     this.searchFieldDecorationTheme,
     this.keyboardType,
     this.textInputAction = TextInputAction.search,
+    this.enableAutomaticLeading = true,
   }) : assert(searchFieldStyle == null || searchFieldDecorationTheme == null);
 
   /// Suggestions shown in the body of the search page while the user types a
@@ -343,6 +344,18 @@ abstract class SearchDelegate<T> {
   ///
   /// Defaults to [TextInputAction.search].
   final TextInputAction textInputAction;
+
+  /// Configure the leading property of the search page [AppBar].
+  /// If [buildLeading] returns a widget, this value has no effect.
+  /// Otherwise:
+  /// 
+  /// If this value is true and [buildLeading] returns null, 
+  /// a back button will be displayed by default.
+  /// If this value is false and [buildLeading] returns null, 
+  /// The search field will take the space used for the leading widget.
+  ///
+  /// Defaults to true
+  final bool enableAutomaticLeading;
 
   /// [Animation] triggered when the search pages fades in or out.
   ///
@@ -578,6 +591,7 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
         child: Scaffold(
           appBar: AppBar(
             leading: widget.delegate.buildLeading(context),
+            automaticallyImplyLeading: widget.delegate.enableAutomaticLeading,
             title: TextField(
               controller: widget.delegate._queryTextController,
               focusNode: focusNode,

@@ -919,6 +919,34 @@ void main() {
     await tester.pump();
     expect(textField.controller!.text.length, 15);
   }, skip: kIsWeb); // [intended] We do not use Flutter-rendered context menu on the Web.
+
+
+  
+  testWidgets('Default AppBar leading', (WidgetTester tester) async {
+    // This is a regression test for https://github.com/flutter/flutter/issues/96337
+    final _TestEmptySearchDelegate delegate = _TestEmptySearchDelegate();
+
+    await tester.pumpWidget(TestHomePage(
+      delegate: delegate,
+    ));
+    await tester.tap(find.byTooltip('Search'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BackButton), findsOneWidget);
+  });
+
+  testWidgets('Disable AppBar automatic leading', (WidgetTester tester) async {
+    // This is a regression test for https://github.com/flutter/flutter/issues/96337
+    final _TestEmptySearchDelegate delegate = _TestEmptySearchDelegate(enableAutomaticLeading: false);
+
+    await tester.pumpWidget(TestHomePage(
+      delegate: delegate,
+    ));
+    await tester.tap(find.byTooltip('Search'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BackButton), findsNothing);
+  });
 }
 
 class TestHomePage extends StatelessWidget {
@@ -1058,6 +1086,8 @@ class _TestSearchDelegate extends SearchDelegate<String> {
 }
 
 class _TestEmptySearchDelegate extends SearchDelegate<String> {
+  _TestEmptySearchDelegate({super.enableAutomaticLeading});
+  
   @override
   Widget? buildLeading(BuildContext context) => null;
 
